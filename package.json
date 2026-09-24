@@ -1,0 +1,12 @@
+{
+  "name": "fundsflow",
+  "private": true,
+  "workspaces": ["server", "client"],
+  "scripts": {
+    "dev": "concurrently -n API,WEB -c blue,green \"npm run dev -w server\" \"npm run dev -w client\"",
+    "install:all": "npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
