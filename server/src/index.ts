@@ -185,6 +185,42 @@ app.post("/api/transactions", async (req, res) => {
   }
 });
 
+app.patch("/api/transactions/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ error: "Invalid transaction ID." });
+  }
+
+  const validation = validateTransactionPayload(req.body);
+  if ("error" in validation) {
+    return res.status(400).json({ error: validation.error });
+  }
+
+  const { description, amount, kind, category, date } = validation.data;
+
+  try {
+    const result = await pool.query<TransactionRow>(
+      `UPDATE transactions
+       SET description = $1,
+           amount = $2,
+           kind = $3,
+           category = $4,
+           transaction_date = $5
+       WHERE id = $6
+       RETURNING id, description, amount::text AS amount, kind, category,
+                 TO_CHAR(transaction_date, 'YYYY-MM-DD') AS date`,
+      [description, amount, kind, category, date, id]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Transaction not found." });
+    }
+    res.json(serializeTransaction(result.rows[0]));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Could not update transaction." });
+  }
+});
+
 app.delete("/api/transactions/:id", async (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) {
