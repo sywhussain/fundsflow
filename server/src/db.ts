@@ -2,13 +2,20 @@ import pg from "pg";
 import dotenv from "dotenv";
 
 dotenv.config();
+
 const { Pool } = pg;
+
+if (!process.env.DATABASE_URL) {
+  throw new Error(
+    "Missing DATABASE_URL environment variable. Copy server/.env.example to server/.env and set DATABASE_URL."
+  );
+}
 
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
 
-export async function initializeDatabase() {
+export async function initializeDatabase(): Promise<void> {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS transactions (
       id SERIAL PRIMARY KEY,

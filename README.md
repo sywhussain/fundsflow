@@ -1,45 +1,38 @@
 # FundsFlow
 
-A learning-focused full-stack personal finance tracker built with React + TypeScript, Node.js + Express, and PostgreSQL.
+A single-user, local-first personal finance tracker built with **React + TypeScript**, **Node.js + Express**, and **PostgreSQL**.
 
-## Features in this starter
-- List transactions
-- Add income or expense transactions
-- Delete transactions
-- Summary totals (income, expenses, balance)
-- PostgreSQL persistence
-- Basic API validation and error handling
+## Features
+- **Transaction management:** Create, edit (`PATCH`), and delete income or expense entries with inline delete confirmation.
+- **Search & filtering:** Filter activity in real time by transaction type (`income` / `expense`), category, or search query.
+- **Accurate summary totals:** Computes total income, total expenses, and net balance in PostgreSQL using integer paise (`NUMERIC(12, 2)`) to avoid floating-point rounding drift.
+- **API validation & error handling:** Validates calendar dates (`YYYY-MM-DD`), decimal precision (up to 2 places), string lengths, and numeric bounds, returning structured JSON errors (`400` / `404` / `503`).
+- **Safe database seeding:** `npm run seed` populates sample transactions only when the table is empty; `npm run seed:reset` explicitly resets and re-seeds.
 
-## Requirements
-- Node.js 20+ and npm
-- Docker Desktop (for local PostgreSQL)
+## Tech Stack
+- **Frontend:** React 18, TypeScript, Vite 6, Lucide Icons, CSS Grid/Flexbox
+- **Backend:** Node.js, Express 4, TypeScript (`tsx`)
+- **Database:** PostgreSQL 16 (`pg` driver, Docker Compose)
 
-## Run locally
-1. Start PostgreSQL:
-   ```bash
-   docker compose up -d
-   ```
-2. Install dependencies from the project root:
-   ```bash
-   npm install
-   ```
-3. Create `server/.env` by copying `server/.env.example`:
-   ```bash
-   cp server/.env.example server/.env
-   ```
-4. Start frontend and backend:
-   ```bash
-   npm run dev
-   ```
-5. Open http://localhost:5173
-
-API health check: http://localhost:4000/api/health
-
-## API routes
-- `GET /api/transactions`
-- `POST /api/transactions`
-- `DELETE /api/transactions/:id`
-- `GET /api/summary`
-
-## Important
-This is a local learning project, not a production financial application. Do not enter real sensitive financial data. Authentication, authorization, migrations, and production deployment are not included yet.
+## Project Structure
+```text
+fundsflow/
+├── client/
+│   ├── .env.example
+│   └── src/
+│       ├── api.ts
+│       ├── types.ts
+│       ├── utils/format.ts
+│       ├── components/
+│       │   ├── SummaryCards.tsx
+│       │   ├── TransactionForm.tsx
+│       │   └── TransactionList.tsx
+│       ├── App.tsx
+│       └── styles.css
+├── server/
+│   ├── .env.example
+│   └── src/
+│       ├── db.ts
+│       ├── index.ts
+│       └── seed.ts
+└── docker-compose.yml
